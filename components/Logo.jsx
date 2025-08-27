@@ -21,7 +21,7 @@ const Logo = ({ logo, imagePath }) => {
         window.removeEventListener("resize", handleResize);
       };
     }
-  }, [handleResize]);
+  }, []); // Remove handleResize dependency to prevent infinite loops
 
   if (!logo || !logo.value) {
     return null;

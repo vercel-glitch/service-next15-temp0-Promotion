@@ -165,41 +165,53 @@ export default function Contact() {
 
   // Function to handle first form interaction
   const handleFirstInteraction = () => {
-    if (!formStarted) {
-      window.dataLayer = window.dataLayer || [];
-      window.dataLayer.push({
-        event: "form start",
-        url: window.location.href,
-      });
-
-      setFormStarted(true);
+    if (!formStarted && typeof window !== "undefined") {
+      try {
+        window.dataLayer = window.dataLayer || [];
+        window.dataLayer.push({
+          event: "form start",
+          url: window.location.href,
+        });
+        setFormStarted(true);
+      } catch (error) {
+        console.warn("GTM form start event failed:", error);
+        setFormStarted(true); // Still mark as started to prevent retries
+      }
     }
   };
 
   // Function to fire GTM event
   const fireGTMEvent = (submittedFormData) => {
     if (typeof window !== "undefined" && window.dataLayer) {
-      window.dataLayer.push({
-        event: "form_submit",
-        url: window.location.href,
-        formData: {
-          name: submittedFormData.name,
-          email: submittedFormData.email,
-          phone: submittedFormData.phone.replace(/[-()\s]/g, ""), // Clean phone number
-          message: submittedFormData.message,
-          zipcode: submittedFormData.zipcode,
-        },
-      });
+      try {
+        window.dataLayer.push({
+          event: "form_submit",
+          url: window.location.href,
+          formData: {
+            name: submittedFormData.name,
+            email: submittedFormData.email,
+            phone: submittedFormData.phone.replace(/[-()\s]/g, ""), // Clean phone number
+            message: submittedFormData.message,
+            zipcode: submittedFormData.zipcode,
+          },
+        });
+      } catch (error) {
+        console.warn("GTM form submit event failed:", error);
+      }
     }
   };
 
   // Function to fire Lead Submitted GTM event
   const fireLeadSubmittedEvent = () => {
     if (typeof window !== "undefined" && window.dataLayer) {
-      window.dataLayer.push({
-        event: "leadSubmitted",
-        url: window.location.href,
-      });
+      try {
+        window.dataLayer.push({
+          event: "leadSubmitted",
+          url: window.location.href,
+        });
+      } catch (error) {
+        console.warn("GTM lead submitted event failed:", error);
+      }
     }
   };
 

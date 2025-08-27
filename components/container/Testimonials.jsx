@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useMemo } from "react";
 import Container from "../common/Container";
 import Heading from "../common/Heading";
 import Logo from "@/components/Logo";
@@ -18,22 +18,25 @@ const Testimonials = ({ data, logo, imagePath }) => {
   const autoSlideRef = useRef(null);
   const animationRef = useRef(null);
 
-  // Generate random avatars for testimonials
-  const getRandomAvatar = (seed) => {
-    return `https://api.dicebear.com/7.x/avataaars/svg?seed=${seed}`;
-  };
+  // Use memoized avatars to prevent regeneration on every render
+  const testimonialsWithAvatars = useMemo(() => {
+    const getRandomAvatar = (seed) => {
+      return `https://api.dicebear.com/7.x/avataaars/svg?seed=${seed}`;
+    };
 
-  // Add random avatars to testimonials if they don't have one
-  const testimonialsWithAvatars = testimonials.map((testimonial, index) => ({
-    ...testimonial,
-    avatar:
-      testimonial.avatar ||
-      getRandomAvatar(testimonial.name || `user-${index}`),
-  }));
+    return testimonials.map((testimonial, index) => ({
+      ...testimonial,
+      avatar:
+        testimonial.avatar ||
+        getRandomAvatar(testimonial.name || `user-${index}`),
+    }));
+  }, [testimonials]);
 
-  // Default avatar using DiceBear
-  const defaultAvatar =
-    "https://api.dicebear.com/7.x/avataaars/svg?seed=default";
+  // Default avatar using DiceBear (memoized)
+  const defaultAvatar = useMemo(() => 
+    "https://api.dicebear.com/7.x/avataaars/svg?seed=default",
+    []
+  );
 
   // Check screen size
   useEffect(() => {

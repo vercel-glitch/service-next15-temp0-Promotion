@@ -9,6 +9,8 @@ import { Phone } from "lucide-react";
 
 import {
   callBackendApi,
+  callBackendApiAll,
+  extractTagData,
   getDomain,
   getImagePath,
   robotsTxt,
@@ -101,17 +103,22 @@ export default function Home({
         <link rel="dns-prefetch" href="//www.google-analytics.com" />
 
         {/* <!-- Google Tag Manager --> */}
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `
-                (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-                new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-                j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-                'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-                })(window,document,'script','dataLayer','${gtm_id}');
-              `,
-          }}
-        />
+        {gtm_id && gtm_id !== 'null' && gtm_id !== 'undefined' && (
+          <script
+            dangerouslySetInnerHTML={{
+              __html: `
+                  if (!window.gtmLoaded && typeof window !== 'undefined') {
+                    window.gtmLoaded = true;
+                    (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+                    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+                    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+                    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+                    })(window,document,'script','dataLayer','${gtm_id}');
+                  }
+                `,
+            }}
+          />
+        )}
         {/* <!-- End Google Tag Manager --> */}
       </Head>
       {/* {gtm_id && gtm_id} */}
@@ -231,26 +238,32 @@ export default function Home({
 
 export async function getServerSideProps({ req }) {
   const domain = getDomain(req?.headers?.host);
-  const faqs = await callBackendApi({ domain, tag: "faqs" });
-  const contact_info = await callBackendApi({ domain, tag: "contact_info" });
-  const logo = await callBackendApi({ domain, tag: "logo" });
+  
+  // Ultra-fast: Fetch ALL data in a single API call
+  const bulkData = await callBackendApiAll({ domain });
+  
+  // Extract individual tags from the bulk response
+  const faqs = extractTagData(bulkData, "faqs");
+  const contact_info = extractTagData(bulkData, "contact_info");
+  const logo = extractTagData(bulkData, "logo");
+  const banner = extractTagData(bulkData, "banner");
+  const services = extractTagData(bulkData, "services");
+  const features = extractTagData(bulkData, "features");
+  const about = extractTagData(bulkData, "about");
+  const benefits = extractTagData(bulkData, "benefits");
+  const testimonials = extractTagData(bulkData, "testimonials");
+  const meta = extractTagData(bulkData, "meta_home");
+  const favicon = extractTagData(bulkData, "favicon");
+  const footer = extractTagData(bulkData, "footer");
+  const locations = extractTagData(bulkData, "locations");
+  const why_us = extractTagData(bulkData, "why_us");
+  const prices = extractTagData(bulkData, "prices");
+  const slogan_1 = extractTagData(bulkData, "slogan_1");
+  const form_head = extractTagData(bulkData, "form_head");
+  const city_name = extractTagData(bulkData, "city_name");
+
   const project_id = logo?.data[0]?.project_id || null;
   const imagePath = await getImagePath(project_id, domain);
-  const banner = await callBackendApi({ domain, tag: "banner" });
-  const services = await callBackendApi({ domain, tag: "services" });
-  const features = await callBackendApi({ domain, tag: "features" });
-  const about = await callBackendApi({ domain, tag: "about" });
-  const benefits = await callBackendApi({ domain, tag: "benefits" });
-  const testimonials = await callBackendApi({ domain, tag: "testimonials" });
-  const meta = await callBackendApi({ domain, tag: "meta_home" });
-  const favicon = await callBackendApi({ domain, tag: "favicon" });
-  const footer = await callBackendApi({ domain, tag: "footer" });
-  const locations = await callBackendApi({ domain, tag: "locations" });
-  const why_us = await callBackendApi({ domain, tag: "why_us" });
-  const prices = await callBackendApi({ domain, tag: "prices" });
-  const slogan_1 = await callBackendApi({ domain, tag: "slogan_1" });
-  const form_head = await callBackendApi({ domain, tag: "form_head" });
-  const city_name = await callBackendApi({ domain, tag: "city_name" });
 
   let project = null; // Initialize to null to avoid undefined serialization errors
   if (project_id) {
