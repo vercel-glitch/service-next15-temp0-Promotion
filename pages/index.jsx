@@ -249,56 +249,116 @@ export default function Home({
 export async function getServerSideProps({ req }) {
   const domain = getDomain(req?.headers?.host);
   
-  // Ultra-fast: Fetch ALL data in a single API call
-  const bulkData = await callBackendApiAll({ domain });
-  
-  // Extract individual tags from the bulk response
-  const faqs = extractTagData(bulkData, "faqs");
-  const contact_info = extractTagData(bulkData, "contact_info");
-  const logo = extractTagData(bulkData, "logo");
-  const banner = extractTagData(bulkData, "banner");
-  const services = extractTagData(bulkData, "services");
-  const features = extractTagData(bulkData, "features");
-  const about = extractTagData(bulkData, "about");
-  const benefits = extractTagData(bulkData, "benefits");
-  const testimonials = extractTagData(bulkData, "testimonials");
-  const meta = extractTagData(bulkData, "meta_home");
-  const favicon = extractTagData(bulkData, "favicon");
-  const footer = extractTagData(bulkData, "footer");
-  const locations = extractTagData(bulkData, "locations");
-  const why_us = extractTagData(bulkData, "why_us");
-  const prices = extractTagData(bulkData, "prices");
-  const slogan_1 = extractTagData(bulkData, "slogan_1");
-  const form_head = extractTagData(bulkData, "form_head");
-  const city_name = extractTagData(bulkData, "city_name");
-
-  const project_id = logo?.data[0]?.project_id || null;
-  const imagePath = await getImagePath(project_id, domain);
-
-  let project = null; // Initialize to null to avoid undefined serialization errors
-  if (project_id) {
-    try {
-      const projectInfoResponse = await fetch(
-        `${process.env.NEXT_PUBLIC_SITE_MANAGER}/api/public/get_project_info/${project_id}`
-      );
-
-      if (projectInfoResponse.ok) {
-        const projectInfoData = await projectInfoResponse.json();
-        project = projectInfoData?.data || null;
-      } else {
-        console.error(
-          "Failed to fetch project info:",
-          projectInfoResponse.status
+  try {
+    // ⚡ ULTRA-FAST: Single bulk data fetch
+    const bulkData = await callBackendApiAll({ domain });
+    
+    // Extract logo to get project_id for parallel project info fetch
+    const logo = extractTagData(bulkData, "logo");
+    const project_id = logo?.data[0]?.project_id || null;
+    
+    // ⚡ PARALLEL: Fetch project info while processing bulk data
+    const projectPromise = project_id ? (async () => {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 3000); // 3 second timeout
+      
+      try {
+        const projectInfoResponse = await fetch(
+          `${process.env.NEXT_PUBLIC_SITE_MANAGER}/api/public/get_project_info/${project_id}`,
+          { 
+            signal: controller.signal,
+            headers: { 'Accept': 'application/json', 'Connection': 'keep-alive' }
+          }
         );
-        project = null;
+        clearTimeout(timeoutId);
+        
+        if (projectInfoResponse.ok) {
+          const projectInfoData = await projectInfoResponse.json();
+          return projectInfoData?.data || null;
+        }
+        return null;
+      } catch (error) {
+        clearTimeout(timeoutId);
+        console.warn("Project info fetch failed:", error.message);
+        return null;
       }
-    } catch (error) {
-      console.error("Error fetching project info:", error);
-      project = null;
-    }
-  }
+    })() : Promise.resolve(null);
 
-  robotsTxt({ domain });
+    // ⚡ PARALLEL: Process data extraction while waiting for project info
+    const [
+      // Extract individual tags from the bulk response
+      faqs,
+      contact_info,
+      banner,
+      services,
+      features,
+      about,
+      benefits,
+      testimonials,
+      meta,
+      favicon,
+      footer,
+      locations,
+      why_us,
+      prices,
+      slogan_1,
+      form_head,
+      city_name,
+      imagePath,
+      project
+    ] = await Promise.all([
+      Promise.resolve(extractTagData(bulkData, "faqs")),
+      Promise.resolve(extractTagData(bulkData, "contact_info")),
+      Promise.resolve(extractTagData(bulkData, "banner")),
+      Promise.resolve(extractTagData(bulkData, "services")),
+      Promise.resolve(extractTagData(bulkData, "features")),
+      Promise.resolve(extractTagData(bulkData, "about")),
+      Promise.resolve(extractTagData(bulkData, "benefits")),
+      Promise.resolve(extractTagData(bulkData, "testimonials")),
+      Promise.resolve(extractTagData(bulkData, "meta_home")),
+      Promise.resolve(extractTagData(bulkData, "favicon")),
+      Promise.resolve(extractTagData(bulkData, "footer")),
+      Promise.resolve(extractTagData(bulkData, "locations")),
+      Promise.resolve(extractTagData(bulkData, "why_us")),
+      Promise.resolve(extractTagData(bulkData, "prices")),
+      Promise.resolve(extractTagData(bulkData, "slogan_1")),
+      Promise.resolve(extractTagData(bulkData, "form_head")),
+      Promise.resolve(extractTagData(bulkData, "city_name")),
+      getImagePath(project_id, domain),
+      projectPromise
+    ]);
+
+    robotsTxt({ domain });
+  } catch (error) {
+    console.error("Critical error in getServerSideProps:", error);
+    // Return minimal fallback data
+    return {
+      props: {
+        contact_info: null,
+        domain,
+        imagePath: "",
+        project_id: null,
+        faqs: null,
+        logo: null,
+        banner: null,
+        services: [],
+        features: null,
+        about: null,
+        benefits: null,
+        testimonials: null,
+        meta: null,
+        favicon: null,
+        footer: null,
+        locations: {},
+        why_us: [],
+        prices: null,
+        slogan_1: null,
+        form_head: null,
+        city_name: null,
+        project: null,
+      },
+    };
+  }
 
   // Keep secret variables server-side only
   return {

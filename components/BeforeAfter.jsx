@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect, useMemo } from "react";
+import React, { useState, useRef, useEffect, useMemo, useCallback } from "react";
 import Container from "./common/Container";
 import Image from "next/image";
 import FullContainer from "./common/FullContainer";
@@ -550,50 +550,61 @@ export default function BeforeAfter({ project_id, niche }) {
 
 function BeforeAfterSlider({ beforeImage, afterImage, beforeAlt, afterAlt }) {
   const [ishover, setIshover] = useState(false);
-
   const [sliderPosition, setSliderPosition] = useState(50);
+  const [isActive, setIsActive] = useState(false);
   const sliderRef = useRef(null);
   const containerRef = useRef(null);
+  const containerRectRef = useRef(null);
 
-  const handleMouseDown = (e) => {
-    e.preventDefault();
-    document.addEventListener("mousemove", handleMouseMove);
-    document.addEventListener("mouseup", handleMouseUp);
-  };
-
-  const handleTouchStart = (e) => {
-    document.addEventListener("touchmove", handleTouchMove);
-    document.addEventListener("touchend", handleTouchEnd);
-  };
-
-  const handleMouseMove = (e) => {
+  // ⚡ Cache container rect to prevent forced reflows
+  const updateContainerRect = useCallback(() => {
     if (containerRef.current) {
-      const containerRect = containerRef.current.getBoundingClientRect();
-      const position =
-        ((e.clientX - containerRect.left) / containerRect.width) * 100;
+      containerRectRef.current = containerRef.current.getBoundingClientRect();
+    }
+  }, []);
+
+  const handleMouseDown = useCallback((e) => {
+    e.preventDefault();
+    setIsActive(true);
+    updateContainerRect();
+    document.addEventListener("mousemove", handleMouseMove, { passive: false });
+    document.addEventListener("mouseup", handleMouseUp, { passive: true });
+  }, []);
+
+  const handleTouchStart = useCallback((e) => {
+    setIsActive(true);
+    updateContainerRect();
+    document.addEventListener("touchmove", handleTouchMove, { passive: false });
+    document.addEventListener("touchend", handleTouchEnd, { passive: true });
+  }, []);
+
+  const handleMouseMove = useCallback((e) => {
+    if (isActive && containerRectRef.current) {
+      const containerRect = containerRectRef.current;
+      const position = ((e.clientX - containerRect.left) / containerRect.width) * 100;
       setSliderPosition(Math.max(0, Math.min(100, position)));
     }
-  };
+  }, [isActive]);
 
-  const handleTouchMove = (e) => {
-    if (containerRef.current && e.touches[0]) {
-      const containerRect = containerRef.current.getBoundingClientRect();
-      const position =
-        ((e.touches[0].clientX - containerRect.left) / containerRect.width) *
-        100;
+  const handleTouchMove = useCallback((e) => {
+    if (isActive && containerRectRef.current && e.touches[0]) {
+      const containerRect = containerRectRef.current;
+      const position = ((e.touches[0].clientX - containerRect.left) / containerRect.width) * 100;
       setSliderPosition(Math.max(0, Math.min(100, position)));
     }
-  };
+  }, [isActive]);
 
-  const handleMouseUp = () => {
+  const handleMouseUp = useCallback(() => {
+    setIsActive(false);
     document.removeEventListener("mousemove", handleMouseMove);
     document.removeEventListener("mouseup", handleMouseUp);
-  };
+  }, []);
 
-  const handleTouchEnd = () => {
+  const handleTouchEnd = useCallback(() => {
+    setIsActive(false);
     document.removeEventListener("touchmove", handleTouchMove);
     document.removeEventListener("touchend", handleTouchEnd);
-  };
+  }, []);
 
   useEffect(() => {
     return () => {

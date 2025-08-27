@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useMemo } from "react";
+import React, { useState, useEffect, useRef, useMemo, useCallback } from "react";
 import Container from "../common/Container";
 import Heading from "../common/Heading";
 import Logo from "@/components/Logo";
@@ -99,21 +99,20 @@ const Testimonials = ({ data, logo, imagePath }) => {
     };
   }, [isDragging, testimonials.length, isMobile, isTablet]);
 
-  // Animation for smooth movement
-  const animation = () => {
-    if (sliderRef.current) {
-      setSliderPosition();
-      if (isDragging) {
-        animationRef.current = requestAnimationFrame(animation);
-      }
+  // ⚡ Optimized animation for smooth movement - using transform directly
+  const animation = useCallback(() => {
+    if (sliderRef.current && isDragging) {
+      sliderRef.current.style.transform = `translateX(${currentTranslate}%)`;
+      animationRef.current = requestAnimationFrame(animation);
     }
-  };
+  }, [isDragging, currentTranslate]);
 
-  const setSliderPosition = () => {
+  // ⚡ Memoized position setter to prevent forced reflows
+  const setSliderPosition = useCallback(() => {
     if (sliderRef.current) {
       sliderRef.current.style.transform = `translateX(${currentTranslate}%)`;
     }
-  };
+  }, [currentTranslate]);
 
   // Manual drag handlers
   const handleDragStart = (e) => {
