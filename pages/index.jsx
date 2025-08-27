@@ -329,6 +329,38 @@ export async function getServerSideProps({ req }) {
     ]);
 
     robotsTxt({ domain });
+
+    // Keep secret variables server-side only
+    return {
+      props: {
+        contact_info: contact_info?.data[0]?.value || null,
+        domain,
+        imagePath,
+        project_id,
+        faqs: faqs?.data[0]?.value || null,
+        logo: logo?.data[0] || null,
+        banner: banner?.data[0] || null,
+        services: Array.isArray(services?.data[0]?.value)
+          ? services?.data[0]?.value
+          : [],
+        features: features?.data[0] || null,
+        about: about?.data[0] || null,
+        benefits: benefits?.data[0] || null,
+        testimonials: testimonials?.data[0]?.value || null,
+        meta: meta?.data[0]?.value || null,
+        favicon: favicon?.data[0]?.file_name || null,
+        footer: footer?.data[0] || null,
+        locations: locations?.data[0]?.value || {},
+        why_us: Array.isArray(why_us?.data[0]?.value)
+          ? why_us?.data[0]?.value
+          : [],
+        prices: prices?.data[0]?.value || null,
+        slogan_1: slogan_1?.data[0]?.value || null,
+        form_head: form_head?.data[0]?.value || null,
+        city_name: city_name?.data[0]?.value || null,
+        project,
+      },
+    };
   } catch (error) {
     console.error("Critical error in getServerSideProps:", error);
     // Return minimal fallback data
@@ -359,36 +391,4 @@ export async function getServerSideProps({ req }) {
       },
     };
   }
-
-  // Keep secret variables server-side only
-  return {
-    props: {
-      contact_info: contact_info?.data[0]?.value || null,
-      domain,
-      imagePath,
-      project_id,
-      faqs: faqs?.data[0]?.value || null,
-      logo: logo?.data[0] || null,
-      banner: banner?.data[0] || null,
-      services: Array.isArray(services?.data[0]?.value)
-        ? services?.data[0]?.value
-        : [],
-      features: features?.data[0] || null,
-      about: about?.data[0] || null,
-      benefits: benefits?.data[0] || null,
-      testimonials: testimonials?.data[0]?.value || null,
-      meta: meta?.data[0]?.value || null,
-      favicon: favicon?.data[0]?.file_name || null,
-      footer: footer?.data[0] || null,
-      locations: locations?.data[0]?.value || {},
-      why_us: Array.isArray(why_us?.data[0]?.value)
-        ? why_us?.data[0]?.value
-        : [],
-      prices: prices?.data[0]?.value || null,
-      slogan_1: slogan_1?.data[0]?.value || null,
-      form_head: form_head?.data[0]?.value || null,
-      city_name: city_name?.data[0]?.value || null,
-      project,
-    },
-  };
 }
