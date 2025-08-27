@@ -101,6 +101,16 @@ export default function Home({
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link rel="dns-prefetch" href="//www.googletagmanager.com" />
         <link rel="dns-prefetch" href="//www.google-analytics.com" />
+        
+        {/* Preload LCP banner image for faster loading */}
+        {banner?.file_name && (
+          <link
+            rel="preload"
+            as="image"
+            href={`${imagePath}/${banner.file_name}`}
+            fetchPriority="high"
+          />
+        )}
 
         {/* <!-- Google Tag Manager --> */}
         {gtm_id && gtm_id !== 'null' && gtm_id !== 'undefined' && (
