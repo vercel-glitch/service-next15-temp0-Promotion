@@ -313,9 +313,9 @@ const Testimonials = ({ data, logo, imagePath }) => {
                               />
                             </div>
                             <div className="flex-1">
-                              <h4 className="text-gray-800 font-semibold text-sm md:text-base">
+                              <h3 className="text-gray-800 font-semibold text-sm md:text-base">
                                 {testimonial.name}
-                              </h4>
+                              </h3>
                               {/* Star Rating */}
                               <div className="flex gap-0.5 mb-2">
                                 {[1, 2, 3, 4, 5].map((star) => (

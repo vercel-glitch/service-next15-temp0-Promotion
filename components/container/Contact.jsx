@@ -438,7 +438,7 @@ export default function Contact() {
       <div className="h-24 w-24 bg-green-100 rounded-full flex items-center justify-center mb-8">
         <CheckCircle className="h-12 w-12 text-green-600" />
       </div>
-      <h3 className="text-3xl font-bold text-white mb-4">Thank You!</h3>
+      <h4 className="text-3xl font-bold text-white mb-4">Thank You!</h4>
       <p className="text-white text-xl max-w-md mb-6">
         Your request has been submitted successfully. We'll contact you shortly
         with your personalized quote.
@@ -464,9 +464,9 @@ export default function Contact() {
                 <FormSuccess />
               ) : (
                 <>
-                  <h4 className="text-3xl leading-none md:text-4xl md:leading-7 font-bold mb-4 text-white text-center">
+                  <h2 className="text-3xl leading-none md:text-4xl md:leading-7 font-bold mb-4 text-white text-center">
                     10% Off Total Price for Online Booking
-                  </h4>
+                  </h2>
                   <h3 className="text-[25px] leading-none md:text-4xl md:leading-7 font-bold mb-7 text-white text-center">
                     Ask For A Quote Here
                   </h3>
