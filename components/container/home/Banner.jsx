@@ -30,8 +30,8 @@ export default function Banner({ image, data, form_head, features, niche }) {
   };
 
   return (
-    <FullContainer className="relative bg-white overflow-hidden md:!h-[790px] lg:!h-auto">
-      <div className="absolute inset-0 h-[600px] md:min-h-[790px] overflow-hidden">
+    <FullContainer className="relative bg-white overflow-hidden min-h-[600px] md:min-h-[790px]">
+      <div className="absolute inset-0 w-full h-full overflow-hidden">
         <Image
           src={image}
           title={data?.imageTitle || data?.title || "Banner"}
@@ -40,6 +40,7 @@ export default function Banner({ image, data, form_head, features, niche }) {
           fill
           sizes="100vw"
           className="object-cover object-center"
+          fetchPriority="high"
         />
         <div className="absolute inset-0 bg-gray-950/70"></div>
       </div>

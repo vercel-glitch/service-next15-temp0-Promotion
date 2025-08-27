@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, useMemo } from "react";
 import Container from "./common/Container";
 import Image from "next/image";
 import FullContainer from "./common/FullContainer";
@@ -489,25 +489,30 @@ export default function BeforeAfter({ project_id, niche }) {
     },
   ];
 
-  let selectedImage = carpet;
-  if (niche === "Chimney Cleaning") selectedImage = chimeny;
-  else if (niche === "Air Conditioning") selectedImage = airduct;
-  else if (niche === "Dryervent Cleaning") selectedImage = dryervent;
-  else if (niche === "Carpet Cleaning") selectedImage = carpet;
-  else if (niche === "Roofing") selectedImage = roofing;
-  else if (niche === "Sliding Door") selectedImage = slidingDoor;
-  else if (niche === "water damage") selectedImage = waterDamage;
-  else if (niche === "Construction") selectedImage = construction;
-  else if (niche === "Kitchen") selectedImage = kitchen;
-  else if (niche === "Hardscaping") selectedImage = hardScaping;
-  else if (niche === "Locksmith") selectedImage = locksmith;
-  else if (niche === "Landscaping") selectedImage = Landscaping;
-  else if (niche==="Bathroom") selectedImage = Bathroom;
-  else if (niche==="Garage Door Repair") selectedImage = GarageDoorRepair;
-  else if (niche==="Fire Damage") selectedImage = fireDamage;
-  else if (niche==="Mold Removal") selectedImage = moldRemoval;
-  else if (niche==="Painting") selectedImage = painting;
-  else if (niche==="Moving") selectedImage = Moving;
+  // Memoize the selected images to prevent unnecessary re-computations
+  const selectedImage = useMemo(() => {
+    const imageMap = {
+      "Chimney Cleaning": chimeny,
+      "Air Conditioning": airduct,
+      "Dryervent Cleaning": dryervent,
+      "Carpet Cleaning": carpet,
+      "Roofing": roofing,
+      "Sliding Door": slidingDoor,
+      "water damage": waterDamage,
+      "Construction": construction,
+      "Kitchen": kitchen,
+      "Hardscaping": hardScaping,
+      "Locksmith": locksmith,
+      "Landscaping": Landscaping,
+      "Bathroom": Bathroom,
+      "Garage Door Repair": GarageDoorRepair,
+      "Fire Damage": fireDamage,
+      "Mold Removal": moldRemoval,
+      "Painting": painting,
+      "Moving": Moving,
+    };
+    return imageMap[niche] || carpet;
+  }, [niche]);
 
 
   return (
@@ -608,7 +613,7 @@ function BeforeAfterSlider({ beforeImage, afterImage, beforeAlt, afterAlt }) {
     >
       {/* Before Image (Static, always visible) */}
       <div className="absolute inset-0">
-        <Image src={afterImage} alt={afterAlt} fill className="object-cover" />
+        <Image src={afterImage} alt={afterAlt} fill className="object-cover" loading="lazy" sizes="(max-width: 768px) 50vw, 25vw" />
         <div
           className={`${
             ishover ? "opacity-100" : "opacity-0"
@@ -629,6 +634,8 @@ function BeforeAfterSlider({ beforeImage, afterImage, beforeAlt, afterAlt }) {
             alt={beforeAlt}
             fill
             className="object-cover object-left"
+            loading="lazy"
+            sizes="(max-width: 768px) 50vw, 25vw"
           />
           <div
             className={`${

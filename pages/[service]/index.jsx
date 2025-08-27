@@ -1,10 +1,7 @@
-import FAQs from "../../components/container/FAQs";
-import Contact from "../../components/container/Contact";
+import dynamic from "next/dynamic";
 import Navbar from "../../components/container/Navbar/Navbar";
-import ServiceCities from "../../components/container/ServiceCities";
-import Footer from "../../components/container/Footer";
-import ServiceBenefits from "../../components/container/home/ServiceBenefits";
 import Breadcrumbs from "@/components/common/Breadcrumbs";
+import ServiceBanner from "@/components/container/ServiceBanner";
 
 import {
   callBackendApi,
@@ -13,9 +10,6 @@ import {
   robotsTxt,
 } from "@/lib/myFun";
 
-import ServiceBanner from "@/components/container/ServiceBanner";
-import Gallery from "@/components/container/home/Gallery";
-import About from "@/components/container/home/About";
 import { useRouter } from "next/router";
 import Head from "next/head";
 import useBreadcrumbs from "@/lib/useBreadcrumbs";
@@ -24,10 +18,16 @@ import Container from "@/components/common/Container";
 import Link from "next/link";
 import { Phone } from "lucide-react";
 
-import ServiceDescription from "@/components/container/services/ServiceDescription";
-import ServiceDescription1 from "@/components/container/services/ServicwDescription1";
-import ServiceDescription2 from "@/components/container/services/ServicwDescription2";
-import ServiceText from "@/components/container/services/ServiceText";
+// Dynamic imports for components below the fold
+const FAQs = dynamic(() => import("../../components/container/FAQs"));
+const Contact = dynamic(() => import("../../components/container/Contact"));
+const ServiceCities = dynamic(() => import("../../components/container/ServiceCities"));
+const Footer = dynamic(() => import("../../components/container/Footer"));
+const Gallery = dynamic(() => import("../../components/container/home/Gallery"));
+const ServiceDescription = dynamic(() => import("../../components/container/services/ServiceDescription"));
+const ServiceDescription1 = dynamic(() => import("../../components/container/services/ServicwDescription1"));
+const ServiceDescription2 = dynamic(() => import("../../components/container/services/ServicwDescription2"));
+const ServiceText = dynamic(() => import("../../components/container/services/ServiceText"));
 
 const capitalizeFirstLetterOfEachWord = (string) => {
   return string

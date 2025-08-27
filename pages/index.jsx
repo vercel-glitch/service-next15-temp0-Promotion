@@ -1,17 +1,7 @@
 import Head from "next/head";
+import dynamic from "next/dynamic";
 import Banner from "../components/container/home/Banner";
 import Navbar from "../components/container/Navbar/Navbar";
-import WhyChoose from "../components/container/home/WhyChoose";
-
-import ServiceCities from "../components/container/ServiceCities";
-import FAQs from "../components/container/FAQs";
-import Testimonials from "../components/container/Testimonials";
-import About from "../components/container/home/About";
-import Footer from "../components/container/Footer";
-import Contact from "../components/container/Contact";
-import ServiceBenefits from "../components/container/home/ServiceBenefits";
-
-// import Gallery from "@/components/container/home/Gallery";
 import Container from "@/components/common/Container";
 import FullContainer from "@/components/common/FullContainer";
 import Link from "next/link";
@@ -24,9 +14,18 @@ import {
   robotsTxt,
 } from "@/lib/myFun";
 
-import FullMonthPromotion from "@/components/Promotion";
-import OurServices from "@/components/container/home/OurServices";
-import BeforeAfter from "@/components/BeforeAfter";
+// Dynamic imports for components below the fold
+const WhyChoose = dynamic(() => import("../components/container/home/WhyChoose"));
+const ServiceCities = dynamic(() => import("../components/container/ServiceCities"));
+const FAQs = dynamic(() => import("../components/container/FAQs"));
+const Testimonials = dynamic(() => import("../components/container/Testimonials"));
+const About = dynamic(() => import("../components/container/home/About"));
+const Footer = dynamic(() => import("../components/container/Footer"));
+const Contact = dynamic(() => import("../components/container/Contact"));
+const ServiceBenefits = dynamic(() => import("../components/container/home/ServiceBenefits"));
+const FullMonthPromotion = dynamic(() => import("@/components/Promotion"));
+const OurServices = dynamic(() => import("@/components/container/home/OurServices"));
+const BeforeAfter = dynamic(() => import("@/components/BeforeAfter"));
 
 export default function Home({
   contact_info,
@@ -94,6 +93,12 @@ export default function Home({
           sizes="16x16"
           href={`${imagePath}/${favicon}`}
         />
+        
+        {/* Preload critical resources */}
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link rel="dns-prefetch" href="//www.googletagmanager.com" />
+        <link rel="dns-prefetch" href="//www.google-analytics.com" />
 
         {/* <!-- Google Tag Manager --> */}
         <script

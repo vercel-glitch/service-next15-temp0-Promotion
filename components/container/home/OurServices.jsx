@@ -1,5 +1,6 @@
 import Container from "@/components/common/Container";
 import FullContainer from "@/components/common/FullContainer";
+import Image from "next/image";
 import React from "react";
 
 const PLACEHOLDER = "/placeholder-service.jpg"; // Place a placeholder image in your public folder
@@ -17,20 +18,17 @@ export default function OurServices({ phone, data, imagePath }) {
               key={service.id}
               className="bg-white border border-blue-900 rounded-xl overflow-hidden shadow-sm hover:shadow-lg transition-shadow duration-200 flex flex-col"
             >
-              <div className="w-full h-28 md:h-56 bg-gray-100 flex items-center justify-center overflow-hidden">
-                {service.image ? (
-                  <img
-                    src={`${imagePath}/${service.image}`}
-                    alt={service.title}
-                    className="object-cover w-full h-full"
-                  />
-                ) : (
-                  <img
-                    src={`${imagePath}/${PLACEHOLDER}`}
-                    alt="Service"
-                    className="object-cover w-full h-full"
-                  />
-                )}
+              <div className="w-full h-28 md:h-56 bg-gray-100 flex items-center justify-center overflow-hidden relative">
+                <Image
+                  src={service.image ? `${imagePath}/${service.image}` : `${imagePath}/${PLACEHOLDER}`}
+                  alt={service.title || "Service"}
+                  fill
+                  sizes="(max-width: 768px) 50vw, 25vw"
+                  className="object-cover"
+                  loading="lazy"
+                  placeholder="blur"
+                  blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAABAAEDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAUEAEAAAAAAAAAAAAAAAAAAAAA/8QAFQEBAQAAAAAAAAAAAAAAAAAAAAX/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwCdABmX/9k="
+                />
               </div>
               <div className="flex flex-col flex-1 p-3 md:p-6 pb-4">
                 <h3 className="md:text-2xl font-bold text-blue-900 mb-2 text-center">
