@@ -19,38 +19,53 @@ import {
 } from "@/lib/myFun";
 
 // Dynamic imports for components below the fold with loading optimization
-const WhyChoose = dynamic(() => import("../components/container/home/WhyChoose"), {
-  loading: () => <div className="h-96 bg-gray-50 animate-pulse" />
-});
-const ServiceCities = dynamic(() => import("../components/container/ServiceCities"), {
-  loading: () => <div className="h-64 bg-gray-50 animate-pulse" />
-});
+const WhyChoose = dynamic(
+  () => import("../components/container/home/WhyChoose"),
+  {
+    loading: () => <div className="h-96 bg-gray-50 animate-pulse" />,
+  }
+);
+const ServiceCities = dynamic(
+  () => import("../components/container/ServiceCities"),
+  {
+    loading: () => <div className="h-64 bg-gray-50 animate-pulse" />,
+  }
+);
 const FAQs = dynamic(() => import("../components/container/FAQs"), {
-  loading: () => <div className="h-96 bg-gray-50 animate-pulse" />
+  loading: () => <div className="h-96 bg-gray-50 animate-pulse" />,
 });
-const Testimonials = dynamic(() => import("../components/container/Testimonials"), {
-  loading: () => <div className="h-64 bg-gray-50 animate-pulse" />
-});
+const Testimonials = dynamic(
+  () => import("../components/container/Testimonials"),
+  {
+    loading: () => <div className="h-64 bg-gray-50 animate-pulse" />,
+  }
+);
 const About = dynamic(() => import("../components/container/home/About"), {
-  loading: () => <div className="h-96 bg-gray-50 animate-pulse" />
+  loading: () => <div className="h-96 bg-gray-50 animate-pulse" />,
 });
 const Footer = dynamic(() => import("../components/container/Footer"), {
-  loading: () => <div className="h-64 bg-gray-50 animate-pulse" />
+  loading: () => <div className="h-64 bg-gray-50 animate-pulse" />,
 });
 const Contact = dynamic(() => import("../components/container/Contact"), {
-  loading: () => <div className="h-96 bg-gray-50 animate-pulse" />
+  loading: () => <div className="h-96 bg-gray-50 animate-pulse" />,
 });
-const ServiceBenefits = dynamic(() => import("../components/container/home/ServiceBenefits"), {
-  loading: () => <div className="h-96 bg-gray-50 animate-pulse" />
-});
+const ServiceBenefits = dynamic(
+  () => import("../components/container/home/ServiceBenefits"),
+  {
+    loading: () => <div className="h-96 bg-gray-50 animate-pulse" />,
+  }
+);
 const FullMonthPromotion = dynamic(() => import("@/components/Promotion"), {
-  loading: () => <div className="h-32 bg-gray-50 animate-pulse" />
+  loading: () => <div className="h-32 bg-gray-50 animate-pulse" />,
 });
-const OurServices = dynamic(() => import("@/components/container/home/OurServices"), {
-  loading: () => <div className="h-96 bg-gray-50 animate-pulse" />
-});
+const OurServices = dynamic(
+  () => import("@/components/container/home/OurServices"),
+  {
+    loading: () => <div className="h-96 bg-gray-50 animate-pulse" />,
+  }
+);
 const BeforeAfter = dynamic(() => import("@/components/BeforeAfter"), {
-  loading: () => <div className="h-64 bg-gray-50 animate-pulse" />
+  loading: () => <div className="h-64 bg-gray-50 animate-pulse" />,
 });
 
 export default function Home({
@@ -75,11 +90,32 @@ export default function Home({
   slogan_1,
   form_head,
   city_name,
-  project,
+  phone_data,
 }) {
-  const phone = project?.phone || null;
-  const gtm_id = project?.additional_config?.gtm_id || null;
-  const niche = project?.domain_id?.niche_id?.name || null;
+  // Try to get phone from dedicated phone_data first, then from contact_info
+  const phone = phone_data?.data?.[0]?.value ||
+                contact_info?.phone || 
+                contact_info?.phone_number || 
+                contact_info?.contact_number ||
+                contact_info?.mobile ||
+                contact_info?.telephone ||
+                contact_info?.tel ||
+                null;
+  
+  // Debug: Log available data structure (only in development)
+  if (process.env.NODE_ENV === 'development') {
+    if (phone_data) {
+      console.log('Phone data:', phone_data);
+    }
+    if (contact_info) {
+      console.log('Contact Info fields:', Object.keys(contact_info));
+      console.log('Contact Info data:', contact_info);
+    }
+    console.log('Final phone value:', phone);
+  }
+  // Note: GTM and niche data removed since project data is not reliable
+  const gtm_id = null;
+  const niche = null;
 
   return (
     <div className="bg-white">
@@ -119,14 +155,18 @@ export default function Home({
           sizes="16x16"
           href={`${imagePath}/${favicon}`}
         />
-        
+
         {/* Preload critical resources */}
         <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link
+          rel="preconnect"
+          href="https://fonts.gstatic.com"
+          crossOrigin="anonymous"
+        />
         <link rel="dns-prefetch" href="//www.googletagmanager.com" />
         <link rel="dns-prefetch" href="//www.google-analytics.com" />
         <link rel="dns-prefetch" href={process.env.NEXT_PUBLIC_SITE_MANAGER} />
-        
+
         {/* Preload LCP banner image for faster loading */}
         {banner?.file_name && (
           <>
@@ -145,7 +185,7 @@ export default function Home({
             />
           </>
         )}
-        
+
         {/* Preload logo for above-the-fold content */}
         {logo?.file_name && (
           <link
@@ -155,12 +195,12 @@ export default function Home({
             fetchPriority="high"
           />
         )}
-        
+
         {/* Critical CSS hint */}
         <link rel="preload" href="/_next/static/css/" as="style" />
 
         {/* <!-- Google Tag Manager --> */}
-        {gtm_id && gtm_id !== 'null' && gtm_id !== 'undefined' && (
+        {gtm_id && gtm_id !== "null" && gtm_id !== "undefined" && (
           <script
             dangerouslySetInnerHTML={{
               __html: `
@@ -277,41 +317,16 @@ export default function Home({
 
 export async function getServerSideProps({ req }) {
   const domain = getDomain(req?.headers?.host);
-  
+
   try {
     // ⚡ ULTRA-FAST: Single bulk data fetch
     const bulkData = await callBackendApiAll({ domain });
-    
+
     // Extract logo to get project_id for parallel project info fetch
     const logo = extractTagData(bulkData, "logo");
     const project_id = logo?.data[0]?.project_id || null;
-    
-    // ⚡ PARALLEL: Fetch project info while processing bulk data
-    const projectPromise = project_id ? (async () => {
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 3000); // 3 second timeout
-      
-      try {
-        const projectInfoResponse = await fetch(
-          `${process.env.NEXT_PUBLIC_SITE_MANAGER}/api/public/get_project_info/${project_id}`,
-          { 
-            signal: controller.signal,
-            headers: { 'Accept': 'application/json', 'Connection': 'keep-alive' }
-          }
-        );
-        clearTimeout(timeoutId);
-        
-        if (projectInfoResponse.ok) {
-          const projectInfoData = await projectInfoResponse.json();
-          return projectInfoData?.data || null;
-        }
-        return null;
-      } catch (error) {
-        clearTimeout(timeoutId);
-        console.warn("Project info fetch failed:", error.message);
-        return null;
-      }
-    })() : Promise.resolve(null);
+
+          // Note: Removed project data fetching as it's not saving properly and not needed
 
     // ⚡ PARALLEL: Process data extraction while waiting for project info
     const [
@@ -331,31 +346,31 @@ export async function getServerSideProps({ req }) {
       why_us,
       prices,
       slogan_1,
-      form_head,
+            form_head,
       city_name,
+      phone_data,
       imagePath,
-      project
-    ] = await Promise.all([
-      Promise.resolve(extractTagData(bulkData, "faqs")),
-      Promise.resolve(extractTagData(bulkData, "contact_info")),
-      Promise.resolve(extractTagData(bulkData, "banner")),
-      Promise.resolve(extractTagData(bulkData, "services")),
-      Promise.resolve(extractTagData(bulkData, "features")),
-      Promise.resolve(extractTagData(bulkData, "about")),
-      Promise.resolve(extractTagData(bulkData, "benefits")),
-      Promise.resolve(extractTagData(bulkData, "testimonials")),
-      Promise.resolve(extractTagData(bulkData, "meta_home")),
-      Promise.resolve(extractTagData(bulkData, "favicon")),
-      Promise.resolve(extractTagData(bulkData, "footer")),
-      Promise.resolve(extractTagData(bulkData, "locations")),
-      Promise.resolve(extractTagData(bulkData, "why_us")),
-      Promise.resolve(extractTagData(bulkData, "prices")),
-      Promise.resolve(extractTagData(bulkData, "slogan_1")),
-      Promise.resolve(extractTagData(bulkData, "form_head")),
-      Promise.resolve(extractTagData(bulkData, "city_name")),
-      getImagePath(project_id, domain),
-      projectPromise
-    ]);
+      ] = await Promise.all([
+        Promise.resolve(extractTagData(bulkData, "faqs")),
+        Promise.resolve(extractTagData(bulkData, "contact_info")),
+        Promise.resolve(extractTagData(bulkData, "banner")),
+        Promise.resolve(extractTagData(bulkData, "services")),
+        Promise.resolve(extractTagData(bulkData, "features")),
+        Promise.resolve(extractTagData(bulkData, "about")),
+        Promise.resolve(extractTagData(bulkData, "benefits")),
+        Promise.resolve(extractTagData(bulkData, "testimonials")),
+        Promise.resolve(extractTagData(bulkData, "meta_home")),
+        Promise.resolve(extractTagData(bulkData, "favicon")),
+        Promise.resolve(extractTagData(bulkData, "footer")),
+        Promise.resolve(extractTagData(bulkData, "locations")),
+        Promise.resolve(extractTagData(bulkData, "why_us")),
+        Promise.resolve(extractTagData(bulkData, "prices")),
+        Promise.resolve(extractTagData(bulkData, "slogan_1")),
+        Promise.resolve(extractTagData(bulkData, "form_head")),
+        Promise.resolve(extractTagData(bulkData, "city_name")),
+        Promise.resolve(extractTagData(bulkData, "phone")),
+        getImagePath(project_id, domain),
+      ]);
 
     robotsTxt({ domain });
 
@@ -387,7 +402,7 @@ export async function getServerSideProps({ req }) {
         slogan_1: slogan_1?.data[0]?.value || null,
         form_head: form_head?.data[0]?.value || null,
         city_name: city_name?.data[0]?.value || null,
-        project,
+        phone_data: phone_data || null,
       },
     };
   } catch (error) {
@@ -416,7 +431,7 @@ export async function getServerSideProps({ req }) {
         slogan_1: null,
         form_head: null,
         city_name: null,
-        project: null,
+        phone_data: null,
       },
     };
   }
