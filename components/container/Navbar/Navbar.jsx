@@ -6,7 +6,6 @@ import FullContainer from "../../common/FullContainer";
 import { useRouter } from "next/router";
 import Logo from "@/components/Logo";
 import { sanitizeUrl } from "@/lib/myFun";
-import CallButton from "@/components/CallButton";
 
 export default function Navbar({ logo, imagePath, phone, data }) {
   const [isOpen, setIsOpen] = useState(false);
@@ -67,7 +66,15 @@ export default function Navbar({ logo, imagePath, phone, data }) {
             <div className="flex items-center justify-end flex-row">
               <div className="flex flex-col gap-1 md:gap-2 justify-center items-center">
                 <div className="text-xs">
-                  <CallButton phone={phone} />
+                  {phone && (
+                    <Link
+                      href={`tel:${phone}`}
+                      className="bg-primary text-white font-bold text-sm md:text-base lg:text-lg hover:bg-primary/90 transition-colors px-3 py-2 md:px-4 md:py-2 rounded-full flex items-center"
+                    >
+                      <Phone className="w-4 h-4 md:w-5 md:h-5 mr-1" />
+                      {phone}
+                    </Link>
+                  )}
                 </div>
                 <h2 className="text-primary font-bold lg:text-lg md:text-[25px] font-barlow leading-none">
                   Call Us Today
@@ -161,7 +168,15 @@ export default function Navbar({ logo, imagePath, phone, data }) {
           <div className=" flex items-center justify-end flex-row">
             <div className="flex flex-col gap-1 md:gap-2 justify-center items-center">
               <div className=" text-xs ">
-                <CallButton phone={phone} />
+                {phone && (
+                  <Link
+                    href={`tel:${phone}`}
+                    className="bg-primary text-white font-bold text-sm md:text-base lg:text-lg hover:bg-primary/90 transition-colors px-3 py-2 md:px-4 md:py-2 rounded-full flex items-center"
+                  >
+                    <Phone className="w-4 h-4 md:w-5 md:h-5 mr-1" />
+                    {phone}
+                  </Link>
+                )}
               </div>
               <h2
                 className={`text-primary font-bold lg:text-lg md:text-[25px] font-barlow leading-none`}
