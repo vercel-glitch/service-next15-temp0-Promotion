@@ -1,11 +1,13 @@
 import Head from "next/head";
 import dynamic from "next/dynamic";
+import Image from "next/image";
 import Banner from "../components/container/home/Banner";
 import Navbar from "../components/container/Navbar/Navbar";
 import Container from "@/components/common/Container";
 import FullContainer from "@/components/common/FullContainer";
 import Link from "next/link";
 import { Phone } from "lucide-react";
+import CallButton from "@/components/CallButton";
 
 import {
   callBackendApi,
@@ -16,18 +18,40 @@ import {
   robotsTxt,
 } from "@/lib/myFun";
 
-// Dynamic imports for components below the fold
-const WhyChoose = dynamic(() => import("../components/container/home/WhyChoose"));
-const ServiceCities = dynamic(() => import("../components/container/ServiceCities"));
-const FAQs = dynamic(() => import("../components/container/FAQs"));
-const Testimonials = dynamic(() => import("../components/container/Testimonials"));
-const About = dynamic(() => import("../components/container/home/About"));
-const Footer = dynamic(() => import("../components/container/Footer"));
-const Contact = dynamic(() => import("../components/container/Contact"));
-const ServiceBenefits = dynamic(() => import("../components/container/home/ServiceBenefits"));
-const FullMonthPromotion = dynamic(() => import("@/components/Promotion"));
-const OurServices = dynamic(() => import("@/components/container/home/OurServices"));
-const BeforeAfter = dynamic(() => import("@/components/BeforeAfter"));
+// Dynamic imports for components below the fold with loading optimization
+const WhyChoose = dynamic(() => import("../components/container/home/WhyChoose"), {
+  loading: () => <div className="h-96 bg-gray-50 animate-pulse" />
+});
+const ServiceCities = dynamic(() => import("../components/container/ServiceCities"), {
+  loading: () => <div className="h-64 bg-gray-50 animate-pulse" />
+});
+const FAQs = dynamic(() => import("../components/container/FAQs"), {
+  loading: () => <div className="h-96 bg-gray-50 animate-pulse" />
+});
+const Testimonials = dynamic(() => import("../components/container/Testimonials"), {
+  loading: () => <div className="h-64 bg-gray-50 animate-pulse" />
+});
+const About = dynamic(() => import("../components/container/home/About"), {
+  loading: () => <div className="h-96 bg-gray-50 animate-pulse" />
+});
+const Footer = dynamic(() => import("../components/container/Footer"), {
+  loading: () => <div className="h-64 bg-gray-50 animate-pulse" />
+});
+const Contact = dynamic(() => import("../components/container/Contact"), {
+  loading: () => <div className="h-96 bg-gray-50 animate-pulse" />
+});
+const ServiceBenefits = dynamic(() => import("../components/container/home/ServiceBenefits"), {
+  loading: () => <div className="h-96 bg-gray-50 animate-pulse" />
+});
+const FullMonthPromotion = dynamic(() => import("@/components/Promotion"), {
+  loading: () => <div className="h-32 bg-gray-50 animate-pulse" />
+});
+const OurServices = dynamic(() => import("@/components/container/home/OurServices"), {
+  loading: () => <div className="h-96 bg-gray-50 animate-pulse" />
+});
+const BeforeAfter = dynamic(() => import("@/components/BeforeAfter"), {
+  loading: () => <div className="h-64 bg-gray-50 animate-pulse" />
+});
 
 export default function Home({
   contact_info,
@@ -101,16 +125,39 @@ export default function Home({
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link rel="dns-prefetch" href="//www.googletagmanager.com" />
         <link rel="dns-prefetch" href="//www.google-analytics.com" />
+        <link rel="dns-prefetch" href={process.env.NEXT_PUBLIC_SITE_MANAGER} />
         
         {/* Preload LCP banner image for faster loading */}
         {banner?.file_name && (
+          <>
+            <link
+              rel="preload"
+              as="image"
+              href={`${imagePath}/${banner.file_name}`}
+              fetchPriority="high"
+            />
+            <link
+              rel="preload"
+              as="image"
+              href={`${imagePath}/${banner.file_name}`}
+              type="image/webp"
+              fetchPriority="high"
+            />
+          </>
+        )}
+        
+        {/* Preload logo for above-the-fold content */}
+        {logo?.file_name && (
           <link
             rel="preload"
             as="image"
-            href={`${imagePath}/${banner.file_name}`}
+            href={`${imagePath}/${logo.file_name}`}
             fetchPriority="high"
           />
         )}
+        
+        {/* Critical CSS hint */}
+        <link rel="preload" href="/_next/static/css/" as="style" />
 
         {/* <!-- Google Tag Manager --> */}
         {gtm_id && gtm_id !== 'null' && gtm_id !== 'undefined' && (
@@ -223,25 +270,7 @@ export default function Home({
       </div>
 
       {/* Fixed Call Button */}
-      <div className="grid md:hidden fixed bottom-0 left-0 right-0 z-50 p-2 bg-white">
-        <div className="w-full bg-gradient-to-b from-green-700 via-lime-600 to-green-600 rounded-md flex flex-col items-center justify-center py-3">
-          <Link
-            title="Call Button"
-            href={`tel:${phone}`}
-            className="flex flex-col text-white items-center justify-center w-full font-barlow"
-          >
-            <div className="flex items-center mb-1">
-              <Phone className="w-8 h-8 mr-3" />
-              <div className="uppercase text-4xl font-extrabold">
-                CALL US NOW
-              </div>
-            </div>
-            <div className="text-3xl font-semibold">
-              {phone ? phone : "Contact Us"}
-            </div>
-          </Link>
-        </div>
-      </div>
+      <CallButton phone={phone} />
     </div>
   );
 }
