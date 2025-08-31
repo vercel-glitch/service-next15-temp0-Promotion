@@ -1,16 +1,12 @@
 import Head from "next/head";
 import dynamic from "next/dynamic";
-import Image from "next/image";
 import Banner from "../components/container/home/Banner";
 import Navbar from "../components/container/Navbar/Navbar";
 import Container from "@/components/common/Container";
 import FullContainer from "@/components/common/FullContainer";
-import Link from "next/link";
-import { Phone } from "lucide-react";
 import CallButton from "@/components/CallButton";
 
 import {
-  callBackendApi,
   callBackendApiAll,
   extractTagData,
   getDomain,
@@ -107,7 +103,7 @@ export default function Home({
 
   // Extract GTM ID from project data
   const gtm_id = project?.additional_config?.gtm_id || null;
-  
+
   // Extract niche from project data
   const niche = project?.domain_id?.niche_id?.name || null;
 

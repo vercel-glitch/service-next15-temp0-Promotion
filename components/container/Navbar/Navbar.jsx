@@ -161,7 +161,13 @@ export default function Navbar({ logo, imagePath, phone, data }) {
           <div className=" flex items-center justify-end flex-row">
             <div className="flex flex-col gap-1 md:gap-2 justify-center items-center">
               <div className=" text-xs ">
-                <CallButton phone={phone} />
+                <a
+                  href={`tel:${phone}`}
+                  className="flex items-center justify-center sm:justify-start gap-2 px-6 py-3 rounded-full bg-[#1A2956] text-white font-semibold text-lg shadow hover:bg-[#22397a] transition-all"
+                >
+                  <Phone className="w-5 h-5" />
+                  {phone}
+                </a>
               </div>
               <h2
                 className={`text-primary font-bold lg:text-lg md:text-[25px] font-barlow leading-none`}
