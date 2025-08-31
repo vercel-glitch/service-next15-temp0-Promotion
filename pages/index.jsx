@@ -91,31 +91,43 @@ export default function Home({
   form_head,
   city_name,
   phone_data,
+  project,
 }) {
-  // Try to get phone from dedicated phone_data first, then from contact_info
-  const phone = phone_data?.data?.[0]?.value ||
-                contact_info?.phone || 
-                contact_info?.phone_number || 
-                contact_info?.contact_number ||
-                contact_info?.mobile ||
-                contact_info?.telephone ||
-                contact_info?.tel ||
-                null;
+  // Try to get phone from multiple sources: project data first, then phone_data, then contact_info
+  const phone =
+    project?.phone ||
+    phone_data?.data?.[0]?.value ||
+    contact_info?.phone ||
+    contact_info?.phone_number ||
+    contact_info?.contact_number ||
+    contact_info?.mobile ||
+    contact_info?.telephone ||
+    contact_info?.tel ||
+    null;
+
+  // Extract GTM ID from project data
+  const gtm_id = project?.additional_config?.gtm_id || null;
   
+  // Extract niche from project data
+  const niche = project?.domain_id?.niche_id?.name || null;
+
   // Debug: Log available data structure (only in development)
-  if (process.env.NODE_ENV === 'development') {
+  if (process.env.NODE_ENV === "development") {
+    if (project) {
+      console.log("Project data:", project);
+      console.log("GTM ID:", gtm_id);
+      console.log("Niche:", niche);
+      console.log("Project phone:", project?.phone);
+    }
     if (phone_data) {
-      console.log('Phone data:', phone_data);
+      console.log("Phone data:", phone_data);
     }
     if (contact_info) {
-      console.log('Contact Info fields:', Object.keys(contact_info));
-      console.log('Contact Info data:', contact_info);
+      console.log("Contact Info fields:", Object.keys(contact_info));
+      console.log("Contact Info data:", contact_info);
     }
-    console.log('Final phone value:', phone);
+    console.log("Final phone value:", phone);
   }
-  // Note: GTM and niche data removed since project data is not reliable
-  const gtm_id = null;
-  const niche = null;
 
   return (
     <div className="bg-white">
@@ -326,7 +338,29 @@ export async function getServerSideProps({ req }) {
     const logo = extractTagData(bulkData, "logo");
     const project_id = logo?.data[0]?.project_id || null;
 
-          // Note: Removed project data fetching as it's not saving properly and not needed
+    // Fetch project data for GTM ID, niche, and phone
+    let project = null;
+    if (project_id) {
+      try {
+        const projectInfoResponse = await fetch(
+          `${process.env.NEXT_PUBLIC_SITE_MANAGER}/api/public/get_project_info/${project_id}`
+        );
+
+        if (projectInfoResponse.ok) {
+          const projectInfoData = await projectInfoResponse.json();
+          project = projectInfoData?.data || null;
+        } else {
+          console.error(
+            "Failed to fetch project info:",
+            projectInfoResponse.status
+          );
+          project = null;
+        }
+      } catch (error) {
+        console.error("Error fetching project info:", error);
+        project = null;
+      }
+    }
 
     // ⚡ PARALLEL: Process data extraction while waiting for project info
     const [
@@ -346,31 +380,31 @@ export async function getServerSideProps({ req }) {
       why_us,
       prices,
       slogan_1,
-            form_head,
+      form_head,
       city_name,
       phone_data,
       imagePath,
-      ] = await Promise.all([
-        Promise.resolve(extractTagData(bulkData, "faqs")),
-        Promise.resolve(extractTagData(bulkData, "contact_info")),
-        Promise.resolve(extractTagData(bulkData, "banner")),
-        Promise.resolve(extractTagData(bulkData, "services")),
-        Promise.resolve(extractTagData(bulkData, "features")),
-        Promise.resolve(extractTagData(bulkData, "about")),
-        Promise.resolve(extractTagData(bulkData, "benefits")),
-        Promise.resolve(extractTagData(bulkData, "testimonials")),
-        Promise.resolve(extractTagData(bulkData, "meta_home")),
-        Promise.resolve(extractTagData(bulkData, "favicon")),
-        Promise.resolve(extractTagData(bulkData, "footer")),
-        Promise.resolve(extractTagData(bulkData, "locations")),
-        Promise.resolve(extractTagData(bulkData, "why_us")),
-        Promise.resolve(extractTagData(bulkData, "prices")),
-        Promise.resolve(extractTagData(bulkData, "slogan_1")),
-        Promise.resolve(extractTagData(bulkData, "form_head")),
-        Promise.resolve(extractTagData(bulkData, "city_name")),
-        Promise.resolve(extractTagData(bulkData, "phone")),
-        getImagePath(project_id, domain),
-      ]);
+    ] = await Promise.all([
+      Promise.resolve(extractTagData(bulkData, "faqs")),
+      Promise.resolve(extractTagData(bulkData, "contact_info")),
+      Promise.resolve(extractTagData(bulkData, "banner")),
+      Promise.resolve(extractTagData(bulkData, "services")),
+      Promise.resolve(extractTagData(bulkData, "features")),
+      Promise.resolve(extractTagData(bulkData, "about")),
+      Promise.resolve(extractTagData(bulkData, "benefits")),
+      Promise.resolve(extractTagData(bulkData, "testimonials")),
+      Promise.resolve(extractTagData(bulkData, "meta_home")),
+      Promise.resolve(extractTagData(bulkData, "favicon")),
+      Promise.resolve(extractTagData(bulkData, "footer")),
+      Promise.resolve(extractTagData(bulkData, "locations")),
+      Promise.resolve(extractTagData(bulkData, "why_us")),
+      Promise.resolve(extractTagData(bulkData, "prices")),
+      Promise.resolve(extractTagData(bulkData, "slogan_1")),
+      Promise.resolve(extractTagData(bulkData, "form_head")),
+      Promise.resolve(extractTagData(bulkData, "city_name")),
+      Promise.resolve(extractTagData(bulkData, "phone")),
+      getImagePath(project_id, domain),
+    ]);
 
     robotsTxt({ domain });
 
@@ -403,6 +437,7 @@ export async function getServerSideProps({ req }) {
         form_head: form_head?.data[0]?.value || null,
         city_name: city_name?.data[0]?.value || null,
         phone_data: phone_data || null,
+        project: project || null,
       },
     };
   } catch (error) {
@@ -432,6 +467,7 @@ export async function getServerSideProps({ req }) {
         form_head: null,
         city_name: null,
         phone_data: null,
+        project: null,
       },
     };
   }

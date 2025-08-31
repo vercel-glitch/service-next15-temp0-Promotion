@@ -260,7 +260,29 @@ export async function getServerSideProps({ req, params }) {
   const project_id = logo?.data[0]?.project_id || null;
   const imagePath = await getImagePath(project_id, domain);
 
-  // Note: Removed project data fetching as it's not saving properly and not needed
+  // Fetch project data for GTM ID, niche, and phone
+  let project = null;
+  if (project_id) {
+    try {
+      const projectInfoResponse = await fetch(
+        `${process.env.NEXT_PUBLIC_SITE_MANAGER}/api/public/get_project_info/${project_id}`
+      );
+
+      if (projectInfoResponse.ok) {
+        const projectInfoData = await projectInfoResponse.json();
+        project = projectInfoData?.data || null;
+      } else {
+        console.error(
+          "Failed to fetch project info:",
+          projectInfoResponse.status
+        );
+        project = null;
+      }
+    } catch (error) {
+      console.error("Error fetching project info:", error);
+      project = null;
+    }
+  }
 
   robotsTxt({ domain });
 
@@ -290,7 +312,8 @@ export async function getServerSideProps({ req, params }) {
       service_description2: service_description2?.data[0] || null,
       city_name: city_name?.data[0]?.value || null,
       form_head: form_head?.data[0]?.value || null,
-      phone: phone_data?.data?.[0]?.value ||
+      phone: project?.phone ||
+             phone_data?.data?.[0]?.value ||
              contact_info?.data[0]?.value?.phone || 
              contact_info?.data[0]?.value?.phone_number || 
              contact_info?.data[0]?.value?.contact_number ||
