@@ -8,8 +8,7 @@ export default function handler(req, res) {
     const metric = JSON.parse(req.body);
     const { name, value, id, timestamp, url } = metric;
 
-    // Log the metric (in production, you'd save to database or analytics service)
-    console.log(`[Web Vitals API] ${name}: ${value}ms at ${url}`);
+    // Metric received (in production, you'd save to database or analytics service)
 
     // Here you can:
     // 1. Save to database
@@ -26,9 +25,7 @@ export default function handler(req, res) {
     };
 
     if (thresholds[name] && value > thresholds[name]) {
-      console.warn(`⚠️ Poor ${name} performance: ${value}ms (threshold: ${thresholds[name]}ms)`);
-      
-      // You could send alerts here
+      // Poor performance detected - could send alerts here
       // await sendSlackAlert(`Poor ${name} performance on ${url}: ${value}ms`);
     }
 

@@ -107,23 +107,7 @@ export default function Home({
   // Extract niche from project data
   const niche = project?.domain_id?.niche_id?.name || null;
 
-  // Debug: Log available data structure (only in development)
-  if (process.env.NODE_ENV === "development") {
-    if (project) {
-      console.log("Project data:", project);
-      console.log("GTM ID:", gtm_id);
-      console.log("Niche:", niche);
-      console.log("Project phone:", project?.phone);
-    }
-    if (phone_data) {
-      console.log("Phone data:", phone_data);
-    }
-    if (contact_info) {
-      console.log("Contact Info fields:", Object.keys(contact_info));
-      console.log("Contact Info data:", contact_info);
-    }
-    console.log("Final phone value:", phone);
-  }
+
 
   return (
     <div className="bg-white">
