@@ -124,14 +124,14 @@ export default function Navbar({ logo, imagePath, phone, data }) {
 
               <div
                 className={`absolute top-full left-0 w-auto min-w-[300px] bg-white shadow-[0_0_10px_rgba(0,0,0,0.5)]
-                transition-all duration-300 ease-in-out flex flex-col
+                transition-all duration-300 ease-in-out flex flex-col max-h-[80vh]
                 ${
                   showServices
                     ? "opacity-100 visible transform translate-y-0"
                     : "opacity-0 invisible transform -translate-y-2"
                 }`}
               >
-                <div className="flex-grow dropdown-services-container scrollbar-hide">
+                <div className="flex-grow dropdown-services-container overflow-y-auto custom-scrollbar">
                   {(Array.isArray(data) ? data : [])?.map((service, index) => {
                     const serviceUrl = sanitizeUrl(service?.title);
                     return (
@@ -212,7 +212,7 @@ export default function Navbar({ logo, imagePath, phone, data }) {
             : "h-0 opacity-0 invisible overflow-hidden"
         }`}
       >
-        <div className="flex flex-col font-barlow font-[600] text-[18px]">
+        <div className="flex flex-col font-barlow font-[600] text-[16px]">
           <Link
             title="Home"
             href="/"
@@ -228,7 +228,7 @@ export default function Navbar({ logo, imagePath, phone, data }) {
 
           <div className="">
             <div
-              className={`px-4 py-1 flex items-center cursor-pointer ${
+              className={`px-4 py-0.5 flex items-center cursor-pointer ${
                 pathname.includes("/services")
                   ? "bg-primary text-white"
                   : "text-black bg-transparent"
@@ -240,7 +240,7 @@ export default function Navbar({ logo, imagePath, phone, data }) {
             </div>
 
             {showServices && (
-              <div className=" mt-2 flex flex-col max-h-[300px] overflow-y-auto gap-2">
+              <div className="mt-1 flex flex-col max-h-[450px] lg:max-h-[80vh] overflow-y-auto gap-0 custom-scrollbar">
                 {(Array.isArray(data) ? data : [])?.map((service, index) => {
                   const serviceUrl = sanitizeUrl(service?.title);
                   return (
@@ -248,11 +248,11 @@ export default function Navbar({ logo, imagePath, phone, data }) {
                       title={service?.title}
                       key={index}
                       href={serviceUrl}
-                      className={`py-1 pl-7 px-4 ${
+                      className={`py-0.5 pl-6 px-3 ${
                         pathname.includes(serviceUrl)
                           ? "bg-primary text-white"
                           : "text-black hover:text-primary"
-                      } text-lg`}
+                      } text-base leading-tight`}
                       onClick={() => setIsOpen(false)}
                     >
                       {service?.title}
@@ -268,7 +268,7 @@ export default function Navbar({ logo, imagePath, phone, data }) {
             return (
               <button
                 key={index}
-                className={`px-4 py-1 cursor-pointer text-left ${
+                className={`px-4 py-0.5 cursor-pointer text-left ${
                   pathname.includes(linkPath)
                     ? "bg-primary text-white"
                     : "text-black bg-transparent"
