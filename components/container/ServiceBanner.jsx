@@ -50,7 +50,7 @@ export default function ServiceBanner({ image, data, form_head, features }) {
       </div>
       <Container className="py-10 font-barlow relative z-10 mt-10 md:mt-0">
         <div className="w-full grid grid-cols-1 md:grid-cols-banner gap-10 md:gap-[66px] text-white">
-          <div className="flex flex-col justify-center md:justify-start">
+          <div className="flex flex-col items-start justify-center">
             {/* Price and Pickup Section */}
             <div className="flex flex-col md:flex-row items-center gap-3 md:gap-5">
               {/* <div className="bg-gradient-to-br from-[#2d6db2] to-[#44b0df] rounded-full text-7xl md:text-8xl font-bold aspect-square h-32 md:h-36 w-32 md:w-36 flex items-center justify-center">
@@ -73,7 +73,7 @@ export default function ServiceBanner({ image, data, form_head, features }) {
             </div>
 
             {/* Text Content Section */}
-            <div className="flex flex-col text-center md:text-left">
+            <div className="flex flex-col items-start text-left justify-center ">
               <h1 className="font-[900] uppercase text-3xl md:text-6xl leading-tight text-shadow-lg mt-2">
                 {data?.heading?.replaceAll(
                   "##service##",
@@ -88,14 +88,14 @@ export default function ServiceBanner({ image, data, form_head, features }) {
                 )}
               </h2>
 
-              <ul className="mb-9 space-y-1 md:space-y-2 md:mx-0 mx-auto text-left">
+              <ul className="mb-9 space-y-1 md:space-y-2 mx-0 text-left ">
                 {(Array.isArray(features) ? features : [])?.map(
                   (feature, idx) => {
                     const IconComponent = iconMap[feature.icon];
                     return (
                       <li
                         key={idx}
-                        className="flex items-center gap-3 text-white font-medium text-base md:text-[20px]"
+                        className="flex items-center justify-start gap-3 text-white font-medium text-base md:text-[20px]"
                       >
                         {IconComponent && (
                           <IconComponent className="w-5 h-5 text-white" />
