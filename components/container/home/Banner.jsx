@@ -51,7 +51,7 @@ export default function Banner({ image, data, form_head, features, niche }) {
       <Container className="py-6 sm:py-10 md:py-20 font-barlow relative z-10 h-full">
         <div className="w-full grid grid-cols-1 md:grid-cols-banner gap-6 sm:gap-8 md:gap-[66px] text-white h-full">
           <div className="relative flex flex-col justify-center text-center md:text-left">
-            <div className="flex items-center justify-center md:justify-start gap-3 md:pl-0">
+            {/* <div className="flex items-center justify-center md:justify-start gap-3 md:pl-0">
               <div
                 className={`${
                   data?.price !== "Free Estimate"
@@ -71,7 +71,7 @@ export default function Banner({ image, data, form_head, features, niche }) {
                   </span>
                 )}
               </div>
-            </div>
+            </div> */}
 
             {niche?.toLowerCase()?.replaceAll("-", " ") !==
               "carpet cleaning" && (

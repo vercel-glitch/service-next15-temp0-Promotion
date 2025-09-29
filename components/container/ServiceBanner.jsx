@@ -53,10 +53,10 @@ export default function ServiceBanner({ image, data, form_head, features }) {
           <div className="flex flex-col justify-center md:justify-start">
             {/* Price and Pickup Section */}
             <div className="flex flex-col md:flex-row items-center gap-3 md:gap-5">
-              <div className="bg-gradient-to-br from-[#2d6db2] to-[#44b0df] rounded-full text-7xl md:text-8xl font-bold aspect-square h-32 md:h-36 w-32 md:w-36 flex items-center justify-center">
+              {/* <div className="bg-gradient-to-br from-[#2d6db2] to-[#44b0df] rounded-full text-7xl md:text-8xl font-bold aspect-square h-32 md:h-36 w-32 md:w-36 flex items-center justify-center">
                 <sup className="text-3xl">$</sup>
                 {data?.price || "89"}
-              </div>
+              </div> */}
               {service?.toLowerCase()?.replaceAll("-", " ") ===
                 "rug cleaning" && (
                 <div className="bg-white rounded-full text-xl md:text-3xl py-4 px-5 shadow-md text-center uppercase w-fit text-primary flex items-center justify-center font-bold gap-2">
@@ -89,20 +89,22 @@ export default function ServiceBanner({ image, data, form_head, features }) {
               </h2>
 
               <ul className="mb-9 space-y-1 md:space-y-2 md:mx-0 mx-auto text-left">
-                {(Array.isArray(features) ? features : [])?.map((feature, idx) => {
-                  const IconComponent = iconMap[feature.icon];
-                  return (
-                    <li
-                      key={idx}
-                      className="flex items-center gap-3 text-white font-medium text-base md:text-[20px]"
-                    >
-                      {IconComponent && (
-                        <IconComponent className="w-5 h-5 text-white" />
-                      )}
-                      {feature.text}
-                    </li>
-                  );
-                })}
+                {(Array.isArray(features) ? features : [])?.map(
+                  (feature, idx) => {
+                    const IconComponent = iconMap[feature.icon];
+                    return (
+                      <li
+                        key={idx}
+                        className="flex items-center gap-3 text-white font-medium text-base md:text-[20px]"
+                      >
+                        {IconComponent && (
+                          <IconComponent className="w-5 h-5 text-white" />
+                        )}
+                        {feature.text}
+                      </li>
+                    );
+                  }
+                )}
               </ul>
             </div>
           </div>

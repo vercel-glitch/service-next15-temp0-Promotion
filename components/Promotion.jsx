@@ -56,18 +56,18 @@ const PromotionCard = ({
       {price && (
         <div className=" text-center">
           <div className="flex flex-col items-center justify-center">
-            <span className="text-5xl font-extrabold">
+            {/* <span className="text-5xl font-extrabold">
               {" "}
               {price !== "Free Estimate" && "$"}
               {price}
-            </span>
+            </span> */}
           </div>
           {serviceTitle && (
             <div className="uppercase text-2xl font-semibold mt-2 leading-tight">
               {serviceTitle}
             </div>
           )}
-          {originalPrice && (
+          {/* {originalPrice && (
             <div className="mt-2 text-lg font-semibold">
               <span className="relative inline-block align-middle">
                 <span
@@ -101,7 +101,7 @@ const PromotionCard = ({
                 </svg>
               </span>
             </div>
-          )}
+          )} */}
           <div className="border-b border-dotted border-white/60 border-blue-950 w-3/4 mx-auto my-4" />
         </div>
       )}
